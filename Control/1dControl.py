@@ -21,6 +21,12 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from functools import partial
 
+#======================================================================================#
+
+#======================================================================================#
+# Configuration Settings #
+#======================================================================================#
+
 plt.style.use('fivethirtyeight')
 
 fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
@@ -31,10 +37,11 @@ line = ax1.scatter( [0, 0], [x_initial, x_target], s = 50, c=['g','r'], marker='
 
 ax2.set_xlim([0,200])
 ax2.set_ylim([-100,100])
-line2, = ax2.plot([0], [x_target - x_initial], lw=1, label = 'Error with Time')
 ax2.set_xlabel('Time')
 ax2.set_ylabel('Error')
+line2, = ax2.plot([0], [x_target - x_initial], lw=1, label = 'Error with Time')
 
+plt.legend()
 
 def init():
     line.set_offsets([[0, x_initial], [0, x_target]])
@@ -47,11 +54,10 @@ def init2():
 #======================================================================================#
 
 
-
 #======================================================================================#
 # Defining the control Parameters #
 #======================================================================================#
-K_p, K_d, K_i = 0.4, 0.8, 0.4
+K_p, K_d, K_i = 0.5, 0.1, 0.008
 #======================================================================================#
 
 #======================================================================================#
@@ -70,7 +76,7 @@ def PID_Control(i):
     global x_current, v_current, v_last, integral
     global sensor_noise, motion_noise
     sensor_noise = random.gauss(0, 0.5)
-    motion_noise = random.gauss(0, v_current/100)
+    motion_noise = random.gauss(0, v_current/10)
     sensor_reading = x_current + sensor_noise
     error = x_target - sensor_reading
     v_current = K_p * error - K_d * v_last + K_i * integral
@@ -94,17 +100,25 @@ def PID_Graph(i):
     line2.set_data(index, error_list)
     return (line2,)
     
-anim = animation.FuncAnimation(fig, PID_Control,
-                            init_func = init,
-                            frames = 500000,
-                            interval = 100)
-                            
-anim2 = animation.FuncAnimation(fig, PID_Graph,
-                                init_func= init2,
-                                frames = 500000,
-                                interval = 100)
-plt.show()
     
+def config(Kp, Kd, Ki, xtarget=0, xinitial=100):
+    global K_p, K_d, K_i, x_target, x_initial
+    K_p, K_d, K_i = Kp, Kd, Ki
+    x_target, x_initial = xtarget, xinitial
+    anim = animation.FuncAnimation(fig, PID_Control,
+                                init_func = init,
+                                frames = 100,
+                                interval = 100)
+                                
+    anim2 = animation.FuncAnimation(fig, PID_Graph,
+                                    init_func= init2,
+                                    frames = 100,
+                                    interval = 100)
+    plt.show()
+    
+
+config(Kp=0.5, Kd=0.5, Ki=0.3)
+
 
     
 #======================================================================================#
