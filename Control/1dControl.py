@@ -64,7 +64,7 @@ K_p, K_d, K_i = 0.5, 0.1, 0.008
 # Visualising the controller #
 #======================================================================================#
 
-
+gravity = 3
 x_current = x_initial
 v_current = v_initial
 v_last, integral = 0, 0
@@ -83,7 +83,7 @@ def PID_Control(i):
     v_last = v_current
     integral += error
     
-    x_current = x_current + v_current - 3 + motion_noise
+    x_current = x_current + v_current - gravity + motion_noise
     print(error, x_current, v_current)
     line.set_offsets([[0, x_current], [0, x_target]])
     
