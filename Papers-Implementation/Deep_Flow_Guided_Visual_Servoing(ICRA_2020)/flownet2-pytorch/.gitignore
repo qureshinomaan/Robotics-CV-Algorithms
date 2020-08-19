@@ -1,0 +1,9 @@
+*.pyc
+.torch
+_ext
+*.o
+*.glb
+*.navmesh
+work
+work/*
+_ext/
